@@ -153,6 +153,7 @@ class App:
 
         if self.score == 0:
             pyxel.text(45, 30, "Tokumaru Junya", pyxel.frame_count % 16)
+        pyxel.text(5, 5, "ver 2025-09-27", 0)
 
 
 App()
