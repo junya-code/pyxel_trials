@@ -63,10 +63,12 @@ class App:
 
         pyxel.load("unti.pyxres")
         self.init_sound()
+        self.music = False
         self.player = Player(72, 85)
-        self.score = 100
+        self.score = Enemy.NUM_STARS
         self.Enemy = Enemy(40, 40, self.score)
-        pyxel.playm(0, loop=True)
+
+        pyxel.playm(1, loop=True)
         pyxel.run(self.update, self.draw)
 
     def init_sound(self):
@@ -128,10 +130,15 @@ class App:
             if self.check_collision(self.player.x, self.player.y, 8, 8, x, y, 1, 1):
                 self.hit = True
                 self.score -= 1
-                pyxel.play(3, 0)  # ← 効果音を鳴らす（チャンネル0でsound[0]）
+                pyxel.play(3, 0)
             else:
                 new_stars.append((x, y, vy))  # 当たってない星だけ残す
         self.Enemy.stars = new_stars
+
+        if self.score == 0 and not self.music:
+            pyxel.stop()
+            pyxel.playm(0, loop=True)
+            self.music = True
 
     def draw(self):
         pyxel.blt(0, 0, 0, 0, 0, 160, 120, 0)
@@ -145,7 +152,7 @@ class App:
             pyxel.text(pyxel.width / 2 - 10, 30, f"{self.score}", 0)
 
         if self.score == 0:
-            pyxel.text(40, 30, "Tokumaru Junya", pyxel.frame_count % 16)
+            pyxel.text(45, 30, "Tokumaru Junya", pyxel.frame_count % 16)
 
 
 App()
