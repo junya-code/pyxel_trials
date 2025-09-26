@@ -4,10 +4,10 @@ import pyxel
 class Enemy:
     NUM_STARS = 100
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, score):
         self.x = x
         self.y = y
-
+        self.score = score
         self.stars = []  # 星の座標と速度のリスト
 
         # 星の座標と速度を初期化してリストに登録する
@@ -63,8 +63,9 @@ class App:
 
         pyxel.load("unti.pyxres")
         self.init_sound()
-        self.player = Player(80, 60)
-        self.Enemy = Enemy(40, 40)
+        self.player = Player(72, 85)
+        self.score = 100
+        self.Enemy = Enemy(40, 40, self.score)
         pyxel.playm(0, loop=True)
         pyxel.run(self.update, self.draw)
 
@@ -121,9 +122,16 @@ class App:
 
         self.hit = False
         # 当たり判定（プレイヤーと星）
+        new_stars = []
+
         for x, y, vy in self.Enemy.stars:
             if self.check_collision(self.player.x, self.player.y, 8, 8, x, y, 1, 1):
                 self.hit = True
+                self.score -= 1
+                pyxel.play(3, 0)  # ← 効果音を鳴らす（チャンネル0でsound[0]）
+            else:
+                new_stars.append((x, y, vy))  # 当たってない星だけ残す
+        self.Enemy.stars = new_stars
 
     def draw(self):
         pyxel.blt(0, 0, 0, 0, 0, 160, 120, 0)
@@ -131,8 +139,13 @@ class App:
         self.Enemy.draw()
         if self.hit:
             pyxel.text(
-                30, 30, "Tokumaru Junya", pyxel.frame_count % 16
+                pyxel.width / 2 - 10, 30, f"{self.score}", pyxel.frame_count % 16
             )  # 点滅する色で表示
+        elif self.score > 0:
+            pyxel.text(pyxel.width / 2 - 10, 30, f"{self.score}", 0)
+
+        if self.score == 0:
+            pyxel.text(40, 30, "Tokumaru Junya", pyxel.frame_count % 16)
 
 
 App()
