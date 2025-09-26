@@ -1,5 +1,5 @@
 from PIL import Image
 
-img = Image.open("original.png")
-img = img.resize((256, 256))
+img = Image.open("resized.png")
+img = img.resize((160, 120))
 img.save("resized.png")
